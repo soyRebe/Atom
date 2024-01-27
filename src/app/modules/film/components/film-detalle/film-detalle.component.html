@@ -1,0 +1,20 @@
+<section class="container">
+  <h1 class="py-5">{{ film?.Title }}</h1>
+  <div class="row pb-2">
+    <div class="col-12 col-md-6 col-lg-4 text-center">
+      <img class="rounded" [src]="film?.Poster" [alt]="film?.Title"/>
+    </div>
+    <article class="col-12 col-md-6 col-lg-8">
+      <div class="card border-0 p-2 p-lg-5 bg-yellow shadow">
+        <h6 class="fw-bold">T&iacute;tulo: {{ film?.Title }}</h6>
+        <p class="fw-bold">Tipo: {{ film?.Type}}</p>
+        <p class="fw-bold">A&ntilde;o: {{ film?.Year}}</p>
+        <p class="fw-bold">G&eacute;nero: {{ film?.Genre}}</p>
+        <p class="fw-bold">Director:{{ film?.Director}}</p>
+        <p class="fw-bold">Actores:{{ film?.Actors}}</p>
+        <p class="fst-italic fw-bold">Trama: {{ film?.Plot}}</p>
+      </div>
+    </article>
+  </div>
+
+</section>

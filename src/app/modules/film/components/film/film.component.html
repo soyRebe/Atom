@@ -1,0 +1,109 @@
+<div class="container pb-5">
+  <div class="py-5">
+    <div class="card bg-yellow border-0 p-5">
+      <form [formGroup]="filter">
+        <div class="mb-3 row">
+          <label for="title" class="col-xs-3 col-sm-auto col-form-label">Titulo:</label>
+          <div class="col-xs-3 col-sm-auto">
+            <input id="title" class="form-control" type="text" formControlName="title" />
+            @if (fFilter['title'] && fFilter['title'].dirty && fFilter['title'].errors?.['required']){
+              <small class="text-black fw-bold mx-1"> El t&iacute;tulo es requerido</small>
+            }
+          </div>
+          <label for="type" class="col-xs-3 col-sm-auto col-form-label">Tipo:</label>
+          <div class="col-xs-3 col-sm-auto">
+            <select id="type" class="form-control" formControlName="type">
+              @for( type of types; track type ) {
+                <option [value]="type">{{ type }}</option>
+              }
+            </select>
+          </div>
+          <label for="year" class="col-xs-3 col-sm-auto col-form-label">A&ntilde;o:</label>
+          <div class="col-xs-3 col-sm-auto">
+            <input id="year" class="form-control" type="text"  formControlName="year" />
+            @if (fFilter['year'] && fFilter['year'].dirty && fFilter['year'].errors?.['pattern']){
+              <small class="text-black fw-bold mx-1">El a&ntilde;o debe ser un n&uacute;mero de 4 d&iacute;gitos</small>
+            }
+            @if (fFilter['year'] && fFilter['year'].dirty && fFilter['year'].errors?.['minLength']){
+              <small class="text-black fw-bold mx-1">El a&ntilde;o debe ser tener formato AAAA</small>
+            }
+            @if (fFilter['year'] && fFilter['year'].dirty && fFilter['year'].errors?.['maxLength']){
+              <small class="text-black fw-bold mx-1">El a&ntilde;o debe ser tener formato AAAA</small>
+            }
+            @if (fFilter['year'] && fFilter['year'].dirty && fFilter['year'].errors?.['min']){
+              <small class="text-black fw-bold mx-1">El año no puede ser inferior al año 1900.</small>
+            }
+            @if (fFilter['year'] && fFilter['year'].dirty && fFilter['year'].errors?.['max']){
+              <small class="text-black fw-bold mx-1">El año no puede ser superior al año actual.</small>
+            }
+          </div>
+          <div class="col-xs-3 col-sm-auto">
+            <button class="btn btn-primary text-white" type="button" [disabled]="filter.invalid" (click)="search()">Buscar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="">
+    @if ( test && test.Search && test.Search.length ) {
+      <div class="d-flex justify-content-end mb-3">
+        Resultados encontrados: <strong>{{ test.totalResults || 0 }}</strong>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th class="text-center" scope="col">#</th>
+            <th scope="col">Titulo</th>
+            <th class="text-center" scope="col">Tipo</th>
+            <th class="text-center" scope="col">A&ntilde;o</th>
+            <th class="text-center" scope="col">Poster</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+            @for (film of test.Search; track film.Title; let i = $index) {
+              <tr>
+                <th class="text-center" scope="row">{{ i + 1 }}</th>
+                <td>
+                  {{ film.Title }}
+                </td>
+                <td class="text-center">
+                  {{ film.Type }}
+                </td>
+                <td class="text-center">
+                  {{ film.Year }}
+                </td>
+                <td class="text-center">
+                  @if ( film.Poster === 'N/A') {
+                    <img class="img-thumbnail" src="assets/img/logo@2x.png" [alt]="film.Title" />
+                  } @else {
+                    <img class="img-thumbnail" [src]=" film.Poster" [alt]="film.Title" />
+                  }
+                </td>
+                <td>
+                  <a [routerLink]="['film-detalle', film.imdbID ]">
+                    <button class="btn btn-primary text-white" type="button">Ver Detalle</button>
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center p-2">
+        <ngb-pagination
+          [collectionSize]="collectionSize"
+          [(page)]="page"
+          [pageSize]="pageSize"
+          (pageChange)="onPageChange($event)"
+        >
+        </ngb-pagination>
+      </div>
+    } @else {
+      <div class="card bg-yellow border-0 p-5 text-center">
+        <h3>No hay resultados para mostrar</h3>
+      </div>
+    }
+  </div>
+</div>
