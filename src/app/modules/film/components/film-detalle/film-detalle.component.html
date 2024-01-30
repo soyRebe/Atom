@@ -1,20 +1,49 @@
-<section class="container">
-  <h1 class="py-5">{{ film?.Title }}</h1>
-  <div class="row pb-2">
-    <div class="col-12 col-md-6 col-lg-4 text-center">
-      <img class="rounded" [src]="film?.Poster" [alt]="film?.Title"/>
+  @if (loading) {
+    <div class="d-flex justify-content-center align-items-center py-5">
+      <img src="assets/img/logo@2x.png" class="rotate" />
     </div>
-    <article class="col-12 col-md-6 col-lg-8">
-      <div class="card border-0 p-2 p-lg-5 bg-yellow shadow">
-        <h6 class="fw-bold">T&iacute;tulo: {{ film?.Title }}</h6>
-        <p class="fw-bold">Tipo: {{ film?.Type}}</p>
-        <p class="fw-bold">A&ntilde;o: {{ film?.Year}}</p>
-        <p class="fw-bold">G&eacute;nero: {{ film?.Genre}}</p>
-        <p class="fw-bold">Director:{{ film?.Director}}</p>
-        <p class="fw-bold">Actores:{{ film?.Actors}}</p>
-        <p class="fst-italic fw-bold">Trama: {{ film?.Plot}}</p>
+  }
+@else {
+<div class="card shadow p-3 m-3 border-0 rounded-3">
+  <div class="row">
+    <div class="d-flex justify-content-between align-items-center">
+      <h1>{{ film?.Title }}</h1>
+      <div>
+        <button type="button" class="btn btn-primary text-white" (click)="back()">Volver</button>
       </div>
-    </article>
+    </div>
   </div>
-
+</div>
+<section class="card shadow p-3 m-3 border-0 rounded-3">
+  <article class="container">
+    <div class="row pb-2 pt-2">
+      <div class="col-12 col-md-6 col-lg-4 text-center">
+        @if ( film?.Poster === 'N/A') {
+          <div class="p-5">
+            <img class="rounded-3 w-100" src="assets/img/caritas-negras@2x.png" [alt]="film?.Title" />
+          </div>
+        } @else {
+          <img class="rounded-3" [src]=" film?.Poster" [alt]="film?.Title" />
+        }
+      </div>
+      <div class="col-12 col-md-6 col-lg-8 pt-2">
+        <div class="card border-0 p-2 p-lg-5 bg-yellow shadow rounded-3">
+          <h4 class="fw-bold">T&iacute;tulo: <span class="fw-normal">{{ film?.Title }}</span></h4>
+          <p class="fw-bold">Tipo: <span class="fw-normal">{{ film?.Type}}</span></p>
+          <p class="fw-bold">A&ntilde;o: <span class="fw-normal">{{ film?.Year}}</span></p>
+          <p class="fw-bold">G&eacute;nero: <span class="fw-normal">{{ film?.Genre}}</span></p>
+          <p class="fw-bold">Director:<span class="fw-normal">{{ film?.Director}}</span></p>
+          <p class="fw-bold">Actores:<span class="fw-normal">{{ film?.Actors}}</span></p>
+          <p class="fst-italic fw-bold">Trama: <span class="fw-normal">{{ film?.Plot}}</span></p>
+          @if( film?.Ratings?.length ) {
+            <h4><strong>Rating</strong></h4>
+            @for ( rating of film?.Ratings; track rating.Value ) {
+              <p>{{ rating?.Source }}: <strong>{{ rating?.Value }}</strong></p>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  </article>
 </section>
+}

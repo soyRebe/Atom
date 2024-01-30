@@ -1,0 +1,25 @@
+
+
+/* spinner */
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.rotate {
+  animation: rotation 2s infinite linear;
+}
+
+@media screen and (max-width: 1220px) {
+  .breakpoint {
+    flex-direction: column;
+  }
+  .mt-button {
+    margin-top: 2rem;
+    width: 100%;
+  }
+}
