@@ -1,0 +1,32 @@
+.navbar-toggler-icon {
+  width: 40px;
+  height: 30px;
+  position: relative;
+  background-color: transparent;
+  background-image: none;
+}
+
+.icon-bar {
+  display: block;
+  width: 30px;
+  height: 4px;
+  background-color: #333;
+  border-radius: 1px;
+  transition: all 0.3s;
+}
+
+.navbar-toggler-icon .icon-bar {
+  margin-top: 4.5px;
+}
+
+.navbar-toggler .icon-bar.to-collapse:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.navbar-toggler .icon-bar.to-collapse:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar-toggler .icon-bar.to-collapse:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
