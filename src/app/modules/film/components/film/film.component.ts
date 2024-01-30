@@ -5,7 +5,9 @@ import {JsonPipe} from "@angular/common";
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {ActivatedRoute, ParamMap, Router, RouterLink} from "@angular/router";
-import {Subscription} from "rxjs";
+import {filter, Subscription} from "rxjs";
+import {LabelTypePipe} from "../../../../pipes/label-type.pipe";
+import {types} from "../../../../config";
 
 @Component({
   selector: 'app-film',
@@ -14,28 +16,24 @@ import {Subscription} from "rxjs";
     JsonPipe,
     ReactiveFormsModule,
     NgbPagination,
-    RouterLink
+    RouterLink,
+    LabelTypePipe
   ],
   templateUrl: './film.component.html',
   styleUrl: './film.component.scss'
 })
 export class FilmComponent implements OnInit {
   subscription: Subscription | undefined;
-
   film: Film | undefined;
-  types: string[] = ['movie', 'series', 'episode'];
-
+  types: { value: string, label: string }[] = types;
   filter: FormGroup = new FormGroup<any>({});
-
   loading: boolean = false;
-
-  test: { Search: any[]; totalResults: string; Response: string; } | undefined;
-
+  searchFilm: { Search: any[]; totalResults: string; Response: string; } | undefined;
   page: number = 1;
   pageSize: number = 10;
   collectionSize: number = 0;
-
   params: any = { page: 1 };
+  message: string = 'No hay resultados para mostrar';
 
   constructor(
     private omdbService: OmdbService,
@@ -64,7 +62,7 @@ export class FilmComponent implements OnInit {
     this.sendParams();
   }
 
-  sendParams(): void {
+  private sendParams(): void {
     this.router.navigate(['/film'], {
       queryParams: this.params
     }).then( () => {} );
@@ -72,7 +70,19 @@ export class FilmComponent implements OnInit {
 
   search(): void {
     this.loading = true;
+    this.setParamsFromFilter();
+    this.sendParams();
+  }
 
+  reset(): void {
+    this.filter.get('title')?.reset();
+    this.filter.get('type')?.reset();
+    this.filter.get('year')?.reset();
+    this.setParamsFromFilter();
+    this.sendParams();
+  }
+
+  private setParamsFromFilter(): void {
     const title: string = this.filter.get('title')?.value;
     const type: string = this.filter.get('type')?.value;
     const year: string = this.filter.get('year')?.value;
@@ -81,16 +91,13 @@ export class FilmComponent implements OnInit {
     this.params['title'] = title;
     this.params['type'] = type;
     this.params['year'] = year;
-
-    this.sendParams();
   }
 
-  list(): void {
+  private list(): void {
+    this.message = '';
     this.subscription = this.route.queryParamMap.subscribe({
       next: (paramsAsMap: ParamMap) => {
-
         this.params.page = paramsAsMap.get('page') || 1;
-
         this.page = this.params.page;
 
         const title: string = paramsAsMap.get('title') || '';
@@ -112,13 +119,30 @@ export class FilmComponent implements OnInit {
           this.filter.get('year')?.setValue(year);
         }
 
-        this.omdbService.list( title, type, year, this.params.page ).subscribe({
-          next: (response: { Search: any[]; totalResults: string; Response: string; }) => {
-            this.test = response;
-            this.loading = false;
-            this.collectionSize = Number( response.totalResults || 0 );
-          }
-        });
+        this.searchFilm = undefined;
+
+        if ( this.filter.valid && this.fFilter['title'].valid ) {
+          this.loading = true;
+          this.omdbService.list(title, type, year, this.params.page).subscribe({
+            next: (response: { Search: any[]; totalResults: string; Response: string; Error?: string }) => {
+              if (response.Response === 'True') {
+                this.searchFilm = response;
+                this.loading = false;
+                this.collectionSize = Number(response.totalResults || 0);
+              } else {
+                this.loading = false;
+                if ( response.Error ) {
+                  this.message = response.Error;
+                }
+              }
+            },
+            error: () => {
+              this.loading = false;
+            }
+          });
+        } else {
+          this.message = 'Ingrese un texto en el campo "T\u00edtulo" para iniciar la b\u00fasqueda.';
+        }
       }
     });
   }
@@ -126,7 +150,4 @@ export class FilmComponent implements OnInit {
   get fFilter(): { [key: string]: AbstractControl } {
     return this.filter.controls;
   }
-
-
 }
-

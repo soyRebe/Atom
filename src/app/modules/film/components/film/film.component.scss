@@ -1,3 +1,28 @@
 img {
   width: 100px;
 }
+
+/* spinner */
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.rotate {
+  animation: rotation 2s infinite linear;
+}
+
+@media screen and (max-width: 1200px) {
+ .breakpoint {
+    flex-direction: column;
+   width: 100%;
+  }
+  .mt-button {
+    margin-top: 2rem;
+    width: 100%;
+  }
+}
